@@ -23,28 +23,41 @@ function addTask() {
   render();
 }
 
+function getActiveTasks() {
+  return tasks.filter((t) => t.done === false);
+}
+
 function toggleTask(id) {
   const task = tasks.find((t) => t.id === id);
-  task.done = true;
+  if (task) {
+    task.done = !task.done;
+  }
   render();
 }
 
 function deleteTask(id) {
-  tasks.filter((t) => t.id !== id);
+  tasks = getActiveTasks();
   render();
 }
 
 function clearCompleted() {
-  tasks = [];
+  tasks = getActiveTasks();
   render();
 }
 
 function getVisibleTasks() {
+  if (currentFilter === "active") {
+    return getActiveTasks();
+  }
+  if (currentFilter === "done") {
+    return tasks.filter((t) => t.done);
+  }
   return tasks;
 }
 
 function updateCounter() {
-  counter.textContent = "Активных задач: " + tasks.length;
+  const activeTasks = tasks.filter((t) => t.done === false);
+  counter.textContent = "Активных задач: " + activeTasks.length;
 }
 
 function render() {
@@ -55,7 +68,7 @@ function render() {
     const li = document.createElement("li");
     li.className = "task";
     if (task.done) {
-      li.classList.add("completed");
+      li.classList.add("done");
     }
 
     const span = document.createElement("span");
